@@ -1,5 +1,7 @@
 using Dsw2026Ej15.Domain.Exceptions;
 using Dsw2026Ej15.Api.Middleware;
+using Dsw2026Ej15.Domain;
+using Dsw2026Ej15.Data;
 
 namespace Dsw2026Ej15.Api
 {
@@ -14,6 +16,8 @@ namespace Dsw2026Ej15.Api
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddHealthChecks();
+
+            builder.Services.AddSingleton<IPersistence, PersistenceInMemory>();
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
