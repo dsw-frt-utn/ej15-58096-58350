@@ -33,18 +33,6 @@ namespace Dsw2026Ej15.Api
 
             app.MapControllers();
 
-            // --- ENDPOINTS TEMPORALES PARA PROBAR EL MIDDLEWARE ---
-
-            app.MapGet("/error-500", () => {
-                // Simulamos que se rompe algo genérico
-                throw new Exception("¡Se cayó la base de datos de mentira!");
-            });
-
-            app.MapGet("/error-400", () => {
-                // Simulamos que falló una validación de negocio
-                throw new ValidationException("El nombre del médico no puede estar vacío");
-            });
-
             app.Run();
         }
     }
