@@ -1,7 +1,9 @@
-﻿using Dsw2026Ej15.Domain;
+﻿using Dsw2026Ej15.Domain.Entities;
+using Dsw2026Ej15.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace Dsw2026Ej15.Data
 {
@@ -15,11 +17,29 @@ namespace Dsw2026Ej15.Data
             LoadSpecialities();
         }
 
+        
         private void LoadSpecialities()
         {
-            // Acá irá la lectura de "products.json" o "specialities.json" de Persona B
-            //te dejo este comentario 
+            try
+            {
+                if (File.Exists("specialities.json"))
+                {
+                    var json = File.ReadAllText("specialities.json");
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var loadedSpecialities = JsonSerializer.Deserialize<List<Speciality>>(json, options);
+
+                    if (loadedSpecialities != null)
+                    {
+                        _specialities.AddRange(loadedSpecialities);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar especialidades: {ex.Message}");
+            }
         }
+        
 
         public IEnumerable<Speciality> GetAllSpecialities() => _specialities;
         public Speciality GetSpecialityById(Guid id) => _specialities.FirstOrDefault(s => s.Id == id);

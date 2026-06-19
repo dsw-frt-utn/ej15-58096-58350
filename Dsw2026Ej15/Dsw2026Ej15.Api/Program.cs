@@ -1,7 +1,7 @@
 using Dsw2026Ej15.Domain.Exceptions;
 using Dsw2026Ej15.Api.Middleware;
-using Dsw2026Ej15.Domain;
 using Dsw2026Ej15.Data;
+using Dsw2026Ej15.Domain.Interfaces;
 
 namespace Dsw2026Ej15.Api
 {
