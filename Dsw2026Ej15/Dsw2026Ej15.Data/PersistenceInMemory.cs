@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.IO;
+using System.Linq;
+
 
 namespace Dsw2026Ej15.Data
 {
@@ -22,9 +25,11 @@ namespace Dsw2026Ej15.Data
         {
             try
             {
-                if (File.Exists("specialities.json"))
+                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Specialities.json");
+                
+                if (File.Exists("Specialities.json"))
                 {
-                    var json = File.ReadAllText("specialities.json");
+                    var json = File.ReadAllText(filePath);
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var loadedSpecialities = JsonSerializer.Deserialize<List<Speciality>>(json, options);
 
