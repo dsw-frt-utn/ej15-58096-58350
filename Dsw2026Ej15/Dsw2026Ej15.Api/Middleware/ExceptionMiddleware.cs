@@ -9,35 +9,40 @@ namespace Dsw2026Ej15.Api.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+
         public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
+
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
                 await _next(context);
             }
-            catch (ValidationException ex)
-            {
-                await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest);
-            }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError);
+                await HandleExceptionAsync(context, ex);
             }
         }
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode statusCode)
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
+            HttpStatusCode status = HttpStatusCode.InternalServerError;
+            string message = "Ocurrió un error inesperado al ejecutar la solicitud";
+
+            if (ex is ValidationException ve)
+            {
+                status = HttpStatusCode.BadRequest;
+                message = ve.Message;
+            }
+
+            var result = JsonSerializer.Serialize(new { error = message });
+
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)statusCode;
+            context.Response.StatusCode = (int)status;
 
-            var response = new { error = exception.Message };
-            var jsonResponse = JsonSerializer.Serialize(response);
-
-            return context.Response.WriteAsync(jsonResponse);
+            await context.Response.WriteAsync(result);
         }
     }
 }
-
