@@ -27,7 +27,7 @@ namespace Dsw2026Ej15.Data
             {
                 string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Specialities.json");
                 
-                if (File.Exists("Specialities.json"))
+                if (File.Exists(filePath))
                 {
                     var json = File.ReadAllText(filePath);
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -38,6 +38,7 @@ namespace Dsw2026Ej15.Data
                         _specialities.AddRange(loadedSpecialities);
                     }
                 }
+            
             }
             catch (Exception ex)
             {
