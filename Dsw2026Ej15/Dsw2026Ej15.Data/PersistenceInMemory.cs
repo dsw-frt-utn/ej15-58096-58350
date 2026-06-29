@@ -1,26 +1,24 @@
 ﻿using Dsw2026Ej15.Domain.Entities;
 using Dsw2026Ej15.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 
 
 namespace Dsw2026Ej15.Data
 {
     public class PersistenceInMemory : IPersistence
     {
-        private readonly List<Doctor> _doctors = new List<Doctor>();
-        private readonly List<Speciality> _specialities = new List<Speciality>();
-
+        private List<Doctor> _doctors = [];
+        private List<Speciality> _specialities = [];
         public PersistenceInMemory()
         {
             LoadSpecialities();
         }
-
-        
         private void LoadSpecialities()
         {
             try
@@ -45,28 +43,39 @@ namespace Dsw2026Ej15.Data
                 Console.WriteLine($"Error al cargar especialidades: {ex.Message}");
             }
         }
-        
 
-        public IEnumerable<Speciality> GetAllSpecialities() => _specialities;
-        public Speciality GetSpecialityById(Guid id) => _specialities.FirstOrDefault(s => s.Id == id);
-        public IEnumerable<Doctor> GetAllDoctors() => _doctors;
-        public Doctor GetDoctorById(Guid id) => _doctors.FirstOrDefault(d => d.Id == id);
+        public async Task<IEnumerable<Speciality>> GetAllSpecialities()
+        {
+            return _specialities;
+        }
 
-        public void AddDoctor(Doctor doctor)
+        public async Task<Speciality?> GetSpecialityById(Guid id)
+        {
+            return _specialities.SingleOrDefault(e => e.Id == id);
+        }
+
+        public async Task<IEnumerable<Doctor>> GetAllDoctors()
+        {
+            return _doctors.Where(d => d.IsActive);
+        }
+
+        public async Task<Doctor?> GetDoctorById(Guid id)
+        {
+            return _doctors.SingleOrDefault(d => d.Id == id && d.IsActive);
+        }
+        public async Task AddDoctor(Doctor doctor)
         {
             _doctors.Add(doctor);
         }
 
-        public void UpdateDoctor(Doctor doctor)
+        public async Task UpdateDoctor(Doctor doctor)
         {
-            var existing = GetDoctorById(doctor.Id);
+            var existing = _doctors.FirstOrDefault(d => d.Id == doctor.Id);
             if (existing != null)
             {
-                existing.Name = doctor.Name;
-                existing.LicenseNumber = doctor.LicenseNumber;
-                existing.IsActive = doctor.IsActive;
-                existing.Speciality = doctor.Speciality;
+                _doctors.Remove(existing);
+                _doctors.Add(doctor);
             }
         }
-    }
+    }    
 }

@@ -19,7 +19,7 @@ namespace Dsw2026Ej15.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateDoctor([FromBody] DoctorModel request)
+        public async Task<IActionResult> CreateDoctor([FromBody] DoctorModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Name))
                 throw new ValidationException("El nombre del médico es requerido.");
@@ -27,29 +27,29 @@ namespace Dsw2026Ej15.Api.Controllers
             if (string.IsNullOrWhiteSpace(request.LicenseNumber))
                 throw new ValidationException("El número de licencia es requerido.");
 
-            var speciality = _persistence.GetSpecialityById(request.SpecialityId);
+            var speciality = await _persistence.GetSpecialityById(request.SpecialityId);
             if (speciality == null)
                 throw new ValidationException("La especialidad indicada no existe.");
 
-            var newDoctor = new Doctor(request.Name, request.LicenseNumber, string.Empty, speciality);
+            var newDoctor = new Doctor(request.Name, request.LicenseNumber, speciality);
 
-            _persistence.AddDoctor(newDoctor);
+            await _persistence.AddDoctor(newDoctor);
 
             return CreatedAtAction(nameof(GetById), new { id = newDoctor.Id }, newDoctor);
         }
 
         [HttpGet]
-        public IActionResult GetAllActiveDoctors()
+        public async Task<IActionResult> GetAllActiveDoctors()
         {
-            var allDoctors = _persistence.GetAllDoctors();
+            var allDoctors = await _persistence.GetAllDoctors();
             var activeDoctors = allDoctors.Where(d => d.IsActive).ToList();
             return Ok(activeDoctors);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var doctor = _persistence.GetDoctorById(id);
+            var doctor = await _persistence.GetDoctorById(id);
 
             if (doctor == null || !doctor.IsActive)
             {
@@ -67,9 +67,9 @@ namespace Dsw2026Ej15.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var doctor = _persistence.GetDoctorById(id);
+            var doctor = await _persistence.GetDoctorById(id);
 
             if (doctor == null || !doctor.IsActive)
             {
@@ -78,7 +78,7 @@ namespace Dsw2026Ej15.Api.Controllers
 
             doctor.Deactivate();
 
-            _persistence.UpdateDoctor(doctor);
+            await _persistence.UpdateDoctor(doctor);
 
             return NoContent();
         }
