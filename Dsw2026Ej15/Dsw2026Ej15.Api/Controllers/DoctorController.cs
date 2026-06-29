@@ -31,14 +31,7 @@ namespace Dsw2026Ej15.Api.Controllers
             if (speciality == null)
                 throw new ValidationException("La especialidad indicada no existe.");
 
-            var newDoctor = new Doctor
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                LicenseNumber = request.LicenseNumber,
-                IsActive = true,
-                Speciality = speciality
-            };
+            var newDoctor = new Doctor(request.Name, request.LicenseNumber, string.Empty, speciality);
 
             _persistence.AddDoctor(newDoctor);
 
@@ -60,7 +53,7 @@ namespace Dsw2026Ej15.Api.Controllers
 
             if (doctor == null || !doctor.IsActive)
             {
-                return NotFound(new { message = $"No se encontró un médico activo con el ID: {id}" });
+                return NotFound();
             }
 
             var resultadoDto = new
@@ -80,15 +73,15 @@ namespace Dsw2026Ej15.Api.Controllers
 
             if (doctor == null || !doctor.IsActive)
             {
-                return NotFound(new { message = $"No se encontró un médico activo con el ID: {id} para dar de baja." });
+                return NotFound();
             }
 
-            doctor.IsActive = false;
+            doctor.Deactivate();
+
             _persistence.UpdateDoctor(doctor);
 
             return NoContent();
         }
-
 
     }
 }

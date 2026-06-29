@@ -1,4 +1,5 @@
 using Dsw2026Ej15.Domain.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using Dsw2026Ej15.Api.Middleware;
 using Dsw2026Ej15.Data;
 using Dsw2026Ej15.Domain.Interfaces;
@@ -10,6 +11,13 @@ namespace Dsw2026Ej15.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True";
+
+            builder.Services.AddDbContext<Dsw2026Ej15DbContext>(options =>
+            {
+                options.UseSqlServer(connectionString);
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen();

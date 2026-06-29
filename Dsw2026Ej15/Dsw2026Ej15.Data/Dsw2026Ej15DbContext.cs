@@ -1,10 +1,19 @@
-﻿using System;
+﻿using Dsw2026Ej15.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Dsw2026Ej15.Data
 {
-    internal class Dsw2026Ej15DbContext
+    public class Dsw2026Ej15DbContext : DbContext
     {
+        public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Speciality> Specialities { get; set; }
+
+        public Dsw2026Ej15DbContext(DbContextOptions<Dsw2026Ej15DbContext> options): base (options)
+        {
+
+        }
     }
 }
